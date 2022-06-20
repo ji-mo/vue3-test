@@ -1,17 +1,25 @@
 import { effectWatch } from "./reactivity/index.js";
-import { mountElement } from "./renderer/index.js";
+import { diff, mountElement } from "./renderer/index.js";
 export function createApp(rootComponent) {
     return {
         mount(rootContainer) {
-            // 将{ state }对象拿到
-            const context = rootComponent.setup();
+            const context = rootComponent.setup(); // 将setup返回值拿到
+            let isMounted = false; // 是否首次挂载，否则diff算法比对
+            let prevSubTree = null; // 储存老的vdom
             effectWatch(() => {
-                rootContainer.innerHTML = ``;
-                // 将state渲染到容器中
-                const subTree = rootComponent.render(context);
-                console.log('subTree----', subTree);
-                mountElement(subTree, rootContainer);
-                // rootContainer.append(element);
+                if (!isMounted) {
+                    isMounted = true; // 置为true
+                    rootContainer.innerHTML = ``;
+                    // 将setup返回值渲染到容器中
+                    const subTree = rootComponent.render(context);
+                    console.log('subTree----', subTree);
+                    mountElement(subTree, rootContainer);
+                    prevSubTree = subTree; // 储存当前vdom
+                } else {
+                    const subTree = rootComponent.render(context);
+                    diff(prevSubTree, subTree);
+                    prevSubTree = subTree;
+                }
             });
         }
     }

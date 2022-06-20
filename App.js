@@ -64,8 +64,8 @@ export default {
         // return h('div', { id: 'appId', class: 'name' }, String(context.state.count));
         return h(
             'div',
-            { id: 'appId', class: 'name' },
-            [h('p', { class: 'text' }, 'p标签'),
+            { id: 'appId'+context.state.count, class: 'name' },
+            [h('p', { class: 'text' }, String(context.state.count)),
             h('span', null, 'span标签')]
         );
     },
