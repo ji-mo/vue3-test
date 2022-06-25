@@ -18,7 +18,7 @@ export function createApp(rootComponent) {
                 } else {
                     const subTree = rootComponent.render(context);
                     diff(prevSubTree, subTree);
-                    prevSubTree = subTree;
+                    prevSubTree = subTree; // 储存当前vdom
                 }
             });
         }
